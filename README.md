@@ -1,233 +1,256 @@
-## Laboratory work II
+## Laboratory work III
 
-Данная лабораторная работа посвещена изучению систем контроля версий на примере **Git**.
+<a href="https://yandex.ru/efir/?stream_id=vjKAlxJ0UQrs"><img src="https://raw.githubusercontent.com/tp-labs/lab03/master/preview.png" width="640"/></a>
 
-```bash
-$ open https://git-scm.com
+Данная лабораторная работа посвещена изучению систем автоматизации сборки проекта на примере **CMake**
+
+```sh
+$ open https://cmake.org/
 ```
 
 ## Tasks
 
-- [x] 1. Создать публичный репозиторий с названием **lab02** и с лиценцией **MIT**
-- [x] 2. Сгенирировать токен для доступа к сервису **GitHub** с правами **repo**
-- [x] 3. Ознакомиться со ссылками учебного материала
-- [x] 4. Выполнить инструкцию учебного материала
-- [x] 5. Составить отчет и отправить ссылку личным сообщением в **Slack**
+- [x] 1. Создать публичный репозиторий с названием **lab03** на сервисе **GitHub**
+- [x] 2. Ознакомиться со ссылками учебного материала
+- [ ] 3. Выполнить инструкцию учебного материала
+- [ ] 4. Составить отчет и отправить ссылку личным сообщением в **Slack**
 
 ## Tutorial
 
-
 ```sh
-# Задаем переменные окружения
-$ export GITHUB_USERNAME=DimaZzZz101 # задаем имя пользователя
-$ export GITHUB_EMAIL=zabotin.d@list.ru # задаем почту аккаунта в гитхаб
-# задем токен с правами repo
-$ export GITHUB_TOKEN=c61d37a994262a7ad31ffd5583cf4844913d657c
-$ alias edit=subl # задаем стандартный текстовый редактор
+$ export GITHUB_USERNAME=DimaZzZz101 # # Устанавливаем значение переменной окружения GITHUB_USERNAME.
 ```
 
 ```sh
-$ cd ${GITHUB_USERNAME}/workspace # переходим директорию DimaZzZz101/workspace
-$ source scripts/activate # 
+$ cd ${GITHUB_USERNAME}/workspace # Переходим в рабочую директорию.
+$ pushd . # создаем стек из директорий.
+# Чтобы проверить работу команды, можно ввести команду dirs -v,
+# которая покажет пронумерованый список директорий.
+# MBP-Dmitrij:workspace mrrobot$ dirs -v
+# 0  ~/DimaZzZz101/workspace
+# 1  ~/DimaZzZz101/workspace
+
+$ source scripts/activate # Выполняем команды из файла activate.
 ```
 
 ```sh
-$ mkdir ~/.config # 
-$ cat > ~/.config/hub <<EOF # записываем следующий текст в hub
-github.com:
-- user: ${GITHUB_USERNAME}
-  oauth_token: ${GITHUB_TOKEN}
-  protocol: https
-EOF
-
-$ git config --global hub.protocol https # указываем в файле hub протокол https
+$ git clone https://github.com/${GITHUB_USERNAME}/lab02.git projects/lab03 # Клонируем репозиторий lab02 в каталог lab03.
+$ cd projects/lab03 # Переходим в директорию lab03.
+$ git remote remove origin # Отключение от ветки lab02.
+$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab03.git # Переходим в ветку lab03.
 ```
 
 ```sh
-$ mkdir projects/lab02 && cd projects/lab02 # создаем директорию lab02 и переходим в нее
-$ git init # инициализируем локальный репозиторий lab02
-$ git config --global user.name ${GITHUB_USERNAME} # указываем в парметрах имя пользователя
-$ git config --global user.email ${GITHUB_EMAIL} # указываем в параметрах почту аккаунта гитхаб
-# check your git global settings
-$ git config -e --global # проверяем установленные настройки
-$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab02.git # добвляем удаленный репозиторий по ссылке
-$ git pull origin main # получаем файлы из ветки main из удаленного репозитория
-$ touch README.md # добавляем README файл
-$ git status # проверяем на какой стадии находится README файл отслеживается/неотслеживается (не отслеживается)
-$ git add README.md # отслеживаем файл 
-$ git commit -m "added README.md" # делаем коммит, комментируя его 
-$ git push origin main # добаляем файл README в удаленный репозиторий
-```
+$ g++  -std=c++11 -I./include -c sources/print.cpp
+# -std=c++11 - устанавливаем стандарт языка
+# -I./include - указываем каталог для поиска заголовочных файлов
+# -c sources/print.cpp - создание объектного файла print.cpp
 
-Добавить на сервисе **GitHub** в репозитории **lab02** файл **.gitignore**
-со следующем содержимом:
+$ ls print.o # Показать print.0
 
-```sh
-# предварительно создаем .gitignore файл в сервисе github
-# в этот файл записываем следующие строки, чтобы гит автоматически не отслеживал их
-*build*/
-*install*/
-*.swp
-.idea/
-```
+# Ищем print в бинарном файле (до вертикальной черты - данные на вход,
+# после - регулярное выражение, которое ищем). 
+$ nm print.o | grep print
+# Вывод:
+# 0000000000000000 T __Z5printRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEERNS_13basic_ostreamIcS2_EE
+# 0000000000000080 T __Z5printRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEERNS_14basic_ofstreamIcS2_EE
 
-```sh
-$ git pull origin main # синхронизируем удаленный и локальный репозиторий
-$ git log # вывести все дейтсвия производимые пользователем с репозиторием
+$ ar rvs print.a print.o # Создаем архив print.a и кладем в него print.o.
 
-# commit 58921ff21c082abe4bae50093b1f702b023a36ee (HEAD -> main, origin/main, origin/HEAD)
-#Author: DimaZzZz101 <71131150+DimaZzZz101@users.noreply.github.com>
-#Date:   Mon Mar 15 16:45:13 2021 +0300
+$ file print.a # Узнаем тип файла print.a.
+# Вывод: print.a: current ar archive random library
 
-    #Create .gitignore
+$ g++ -std=c++11 -I./include -c examples/example1.cpp
+# -std=c++11 - устанавливаем стандарт языка.
+# -I./include - указываем каталог для поиска заголовочных файлов.
+# -c examples/example1.cpp - создание объектного файла example1.cpp.
 
-#commit 9f6e3797e46fe4b914b1721ef733e6f1f7d97e11
-#Author: DimaZzZz101 <zabotin.d@list.ru>
-#Date:   Mon Mar 15 16:42:03 2021 +0300
+$ ls example1.o # Показать файл example1.o.
 
-    #added README.md
+$ g++ example1.o print.a -o example1 # Компилируем example1.o и print.a.
+                                      # Имя исполняемого файла example1.
 
-#commit aedf58f2e580c1569c34f983455f3887a231451b
-#Author: DimaZzZz101 <71131150+DimaZzZz101@users.noreply.github.com>
-#Date:   Mon Mar 15 15:41:31 2021 +0300
-
-    #Initial commit
- 
+$ ./example1 && echo # Запуск скомпилированного файла и вывод результата.
+# Вывод: hello
 ```
 
 ```sh
-$ mkdir sources # создание директории sources
-$ mkdir include # создание директории include
-$ mkdir examples # создание директории examples
-# запись в файл print.cpp следующего кода (реализация фугкций вывода)
-$ cat > sources/print.cpp <<EOF 
-#include <print.hpp>
+$ g++ -std=c++11 -I./include -c examples/example2.cpp
+# -std=c++11 - устанавливаем стандарт языка.
+# -I./include - указываем каталог для поиска заголовочных файлов.
+# -c examples/example2.cpp - создание объектного файла example2.cpp.
 
-void print(const std::string& text, std::ostream& out)
-{
-  out << text;
-}
+$ nm example2.o # Просмотр бинарного файла example.o
 
-void print(const std::string& text, std::ofstream& out)
-{
-  out << text;
-}
+$ g++ example2.o print.a -o example2 # Компилируем example2.o и print.a.
+                                      # Имя исполняемого файла example2.
+
+$ ./example2 # Запуск скомпилированного файла.
+
+$ cat log.txt && echo # Открываем файл log.txt и выводим в консоль результат.
+# Вывод: hello
+```
+
+```sh
+# Последовательно удаляем файлы: example1.o, example2.o, print.o, print.a, example1, example2, log.txt.
+$ rm -rf example1.o example2.o print.o
+$ rm -rf print.a
+$ rm -rf example1 example2
+$ rm -rf log.txt
+```
+
+```sh
+# Настройка файла CMakeLists.txt путем записи в него следующего кода.
+$ cat > CMakeLists.txt <<EOF
+cmake_minimum_required(VERSION 3.4)
+project(print)
 EOF
 ```
 
 ```sh
-# запись в файл print.hpp следующего кода (объявление функций вывода в заголовочном файле)
-$ cat > include/print.hpp <<EOF
-#include <fstream>
-#include <iostream>
-#include <string>
-
-void print(const std::string& text, std::ofstream& out);
-void print(const std::string& text, std::ostream& out = std::cout);
+# Установка параметров в файле CMakeLists.txt.
+$ cat >> CMakeLists.txt <<EOF
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 EOF
 ```
 
 ```sh
-# запись в файл main.cpp следующего кода (пример передачи аргументов в main)
-$ cat > examples/example1.cpp <<EOF
-#include <print.hpp>
-
-int main(int argc, char** argv)
-{
-  print("hello");
-}
+# Создание статической библиотека с именем print, исполняемый файл которой print.cpp.
+$ cat >> CMakeLists.txt <<EOF
+add_library(print STATIC \${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
 EOF
 ```
 
 ```sh
-# запись в файл main.cpp следующего кода (пример чтение из файла)
-$ cat > examples/example2.cpp <<EOF
-#include <print.hpp>
-
-#include <fstream>
-
-int main(int argc, char** argv)
-{
-  std::ofstream file("log.txt");
-  print(std::string("hello"), file);
-}
+# Подлючение заголовочных файлов.
+$ cat >> CMakeLists.txt <<EOF
+include_directories(\${CMAKE_CURRENT_SOURCE_DIR}/include)
 EOF
 ```
 
 ```sh
-$ edit README.md # редактирование файла README.md
+# Компилируем и собираем проект.
+$ cmake -H. -B_build
+$ cmake --build _build
 ```
 
 ```sh
-$ git status # проверка отслеживания фалов git-ом
-$ git add README.md # добавление README.md в отслеживаемые git-ом файлы
-$ git commit -m "added sources" # делаем коммит с описанием: "added sources"
-$ git push origin main # добавляем изменения в ветку main
+# Подключаем исполняемые файлы.
+$ cat >> CMakeLists.txt <<EOF
+add_executable(example1 \${CMAKE_CURRENT_SOURCE_DIR}/examples/example1.cpp)
+add_executable(example2 \${CMAKE_CURRENT_SOURCE_DIR}/examples/example2.cpp)
+EOF
+```
+
+```sh
+# Линковка исполняемых файлов с проектом.
+$ cat >> CMakeLists.txt <<EOF
+target_link_libraries(example1 print)
+target_link_libraries(example2 print)
+EOF
+```
+
+```sh
+$ cmake --build _build # Инициализация сборки проекта и его записи в директорию lab03/_build.
+$ cmake --build _build --target print # Запуск сборки, цель - проект print.
+$ cmake --build _build --target example1 # Запуск сборки, цель - проект example1.
+$ cmake --build _build --target example2 #Запуск сборки, цель - проект example2.
+```
+
+```sh
+$ ls -la _build/libprint.a # Просмотр содержимого libprint.a.
+# Вывод: -rw-r--r--  1 mrrobot  staff  13728 23 мар 02:12 _build/libprint.a
+$ _build/example1 && echo # Запуск example1 и вывод результата.
+# Вывод: hello
+$ _build/example2 # Запуск example2.
+$ cat log.txt && echo # Открываем файл log.txt и выводим результат.
+# Вывод: hello
+$ rm -rf log.txt # Удаляем файл log.txt
+```
+
+```sh
+$ git clone https://github.com/tp-labs/lab03 tmp # Клонируем репозиторий заданием ЛР в директорию tmp.
+$ mv -f tmp/CMakeLists.txt . # Помещаем в tmp файл CMakeLists.txt.
+$ rm -rf tmp # Удаляем директорию tmp.
+```
+
+```sh
+$ cat CMakeLists.txt # Открываем файл CMakeLists.txt для чтения.
+$ cmake -H. -B_build -D CMAKE_INSTALL_PREFIX=_install
+# -H. - Установка директории, в которую будет генерироваться файл.
+# -B_build - Указание директории для собираемых файлов.
+# -D - Действие аналогичны команде set.
+
+$ cmake --build _build --target install # Указание целей и последующая сборка проекта.
+
+$ tree _install # Демострация результата.
+# Вывод: 
+# _install
+#├── cmake
+#│   ├── print-config-noconfig.cmake
+#│   └── print-config.cmake
+#├── include
+#│   └── print.hpp
+#└── lib
+#    └── libprint.a
+
+#3 directories, 4 files
+```
+
+```sh
+$ git add CMakeLists.txt # Добвляем файл CMakeLists.txt в отслеживаемые.
+
+$ git commit -m "added CMakeLists.txt" # Делаем коммит.
+
+$ git push origin master # Отправляем на удаленный репозиторий в ветку master.
 ```
 
 ## Report
 
 ```sh
-$ cd ~/workspace/ # переходим в директорию workspace
-$ export LAB_NUMBER=02 # устанавливаем значение номера лабораторной работы
-$ git clone https://github.com/tp-labs/lab${LAB_NUMBER}.git tasks/lab${LAB_NUMBER} # клонируем репозиторий текущей лабораторной работы
-$ mkdir reports/lab${LAB_NUMBER} # создаем папку лабораторной в директории для отчетов
-$ cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md # копируем содержимое файла README.md в файл REPORT.md
-$ cd reports/lab${LAB_NUMBER} # переходим в директорию текущей лабораторной работы 
-$ edit REPORT.md # редактируем файл отчета
-$ gist REPORT.md # загружаем файл отчета в gist
+$ popd # Извлекаем директорию из вершины стека
+$ export LAB_NUMBER=03
+$ git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
+$ mkdir reports/lab${LAB_NUMBER}
+$ cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md
+$ cd reports/lab${LAB_NUMBER}
+$ edit REPORT.md
+$ gist REPORT.md
 ```
 
 ## Homework
 
-### Part I
+Представьте, что вы стажер в компании "Formatter Inc.".
+### Задание 1
+Вам поручили перейти на систему автоматизированной сборки **CMake**.
+Исходные файлы находятся в директории [formatter_lib](formatter_lib).
+В этой директории находятся файлы для статической библиотеки *formatter*.
+Создайте `CMakeList.txt` в директории [formatter_lib](formatter_lib),
+с помощью которого можно будет собирать статическую библиотеку *formatter*.
 
-1. Создайте пустой репозиторий на сервисе github.com (или gitlab.com, или bitbucket.com).
-2. Выполните инструкцию по созданию первого коммита на странице репозитория, созданного на предыдещем шаге.
-3. Создайте файл `hello_world.cpp` в локальной копии репозитория (который должен был появиться на шаге 2). Реализуйте программу **Hello world** на языке C++ используя плохой стиль кода. Например, после заголовочных файлов вставьте строку `using namespace std;`.
-4. Добавьте этот файл в локальную копию репозитория.
-5. Закоммитьте изменения с *осмысленным* сообщением.
-6. Изменитьте исходный код так, чтобы программа через стандартный поток ввода запрашивалось имя пользователя. А в стандартный поток вывода печаталось сообщение `Hello world from @name`, где `@name` имя пользователя.
-7. Закоммитьте новую версию программы. Почему не надо добавлять файл повторно `git add`?
-8. Запуште изменения в удалёный репозиторий.
-9. Проверьте, что история коммитов доступна в удалёный репозитории.
+### Задание 2
+У компании "Formatter Inc." есть перспективная библиотека,
+которая является расширением предыдущей библиотеки. Т.к. вы уже овладели
+навыком созданием `CMakeList.txt` для статической библиотеки *formatter*, ваш 
+руководитель поручает заняться созданием `CMakeList.txt` для библиотеки 
+*formatter_ex*, которая в свою очередь использует библиотеку *formatter*.
 
-### Part II
+### Задание 3
+Конечно же ваша компания предоставляет примеры использования своих библиотек.
+Чтобы продемонстрировать как работать с библиотекой *formatter_ex*,
+вам необходимо создать два `CMakeList.txt` для двух простых приложений:
+* *hello_world*, которое использует библиотеку *formatter_ex*;
+* *solver*, приложение которое испольует статические библиотеки *formatter_ex* и *solver_lib*.
 
-**Note:** *Работать продолжайте с теми же репоззиториями, что и в первой части задания.*
-1. В локальной копии репозитория создайте локальную ветку `patch1`.
-2. Внесите изменения в ветке `patch1` по исправлению кода и избавления от `using namespace std;`.
-3. **commit**, **push** локальную ветку в удалённый репозиторий.
-4. Проверьте, что ветка `patch1` доступна в удалёный репозитории.
-5. Создайте pull-request `patch1 -> master`.
-6. В локальной копии в ветке `patch1` добавьте в исходный код комментарии.
-7. **commit**, **push**.
-8. Проверьте, что новые изменения есть в созданном на **шаге 5** pull-request
-9. В удалённый репозитории выполните  слияние PR `patch1 -> master` и удалите ветку `patch1` в удаленном репозитории.
-10. Локально выполните **pull**.
-11. С помощью команды **git log** просмотрите историю в локальной версии ветки `master`.
-12. Удалите локальную ветку `patch1`.
-
-### Part III
-
-**Note:** *Работать продолжайте с теми же репоззиториями, что и в первой части задания.*
-1. Создайте новую локальную ветку `patch2`.
-2. Измените *code style* с помощью утилиты [**clang-format**](http://clang.llvm.org/docs/ClangFormat.html). Например, используя опцию `-style=Mozilla`.
-3. **commit**, **push**, создайте pull-request `patch2 -> master`.
-4. В ветке **master** в удаленном репозитории измените комментарии, например, расставьте знаки препинания, переведите комментарии на другой язык.
-5. Убедитесь, что в pull-request появились *конфликтны*.
-6. Для этого локально выполните **pull** + **rebase** (точную последовательность команд, следует узнать самостоятельно). **Исправьте конфликты**.
-7. Сделайте *force push* в ветку `patch2`
-8. Убедитель, что в pull-request пропали конфликтны. 
-9. Вмержите pull-request `patch2 -> master`.
+**Удачной стажировки!**
 
 ## Links
-
-- [hub](https://hub.github.com/)
-- [GitHub](https://github.com)
-- [Bitbucket](https://bitbucket.org)
-- [Gitlab](https://about.gitlab.com)
-- [LearnGitBranching](http://learngitbranching.js.org/)
+- [Основы сборки проектов на С/C++ при помощи CMake](https://eax.me/cmake/)
+- [CMake Tutorial](http://neerc.ifmo.ru/wiki/index.php?title=CMake_Tutorial)
+- [C++ Tutorial - make & CMake](https://www.bogotobogo.com/cplusplus/make.php)
+- [Autotools](http://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html)
+- [CMake](https://cgold.readthedocs.io/en/latest/index.html)
 
 ```
 Copyright (c) 2015-2020 The ISC Authors
