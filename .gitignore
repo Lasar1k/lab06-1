@@ -2,3 +2,4 @@
 *install*/
 *.swp
 .idea/
+.DS_Store
