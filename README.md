@@ -1,6 +1,4 @@
-## Laboratory work III
-
-<a href="https://yandex.ru/efir/?stream_id=vjKAlxJ0UQrs"><img src="https://raw.githubusercontent.com/tp-labs/lab03/master/preview.png" width="640"/></a>
+## Laboratory work III Заботин Дмитрий ИУ8-21
 
 Данная лабораторная работа посвещена изучению систем автоматизации сборки проекта на примере **CMake**
 
