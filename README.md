@@ -1,255 +1,335 @@
-[![Build Status](https://travis-ci.org/DimaZzZz101/lab06.svg?branch=master)](https://travis-ci.org/DimaZzZz101/lab06)
-## Laboratory work III Заботин Дмитрий ИУ8-21
+## Laboratory work VI
 
-Данная лабораторная работа посвещена изучению систем автоматизации сборки проекта на примере **CMake**
+Данная лабораторная работа посвещена изучению средств пакетирования на примере **CPack**
 
 ```sh
-$ open https://cmake.org/
+$ open https://cmake.org/Wiki/CMake:CPackPackageGenerators
 ```
 
 ## Tasks
 
-- [x] 1. Создать публичный репозиторий с названием **lab03** на сервисе **GitHub**
-- [x] 2. Ознакомиться со ссылками учебного материала
-- [x] 3. Выполнить инструкцию учебного материала
+- [x] 1. Создать публичный репозиторий с названием **lab06** на сервисе **GitHub**
+- [x] 2. Выполнить инструкцию учебного материала
+- [x] 3. Ознакомиться со ссылками учебного материала
 - [x] 4. Составить отчет и отправить ссылку личным сообщением в **Slack**
 
 ## Tutorial
 
 ```sh
-$ export GITHUB_USERNAME=DimaZzZz101 # # Устанавливаем значение переменной окружения GITHUB_USERNAME.
+$ export GITHUB_USERNAME=DimaZzZz101 # Задаем переменной окружения имя пользователя гитхаб
+$ export GITHUB_EMAIL=my_e-mail # Задаем переменной окружения название почти пользователя гитхаб
+$ alias edit=subl # По умолчанию указываем редактор sublime-text
+$ alias gsed=sed # for *-nix system 
 ```
 
 ```sh
-$ cd ${GITHUB_USERNAME}/workspace # Переходим в рабочую директорию.
-$ pushd . # создаем стек из директорий.
-# Чтобы проверить работу команды, можно ввести команду dirs -v,
-# которая покажет пронумерованый список директорий.
-# MBP-Dmitrij:workspace mrrobot$ dirs -v
-# 0  ~/DimaZzZz101/workspace
-# 1  ~/DimaZzZz101/workspace
-
-$ source scripts/activate # Выполняем команды из файла activate.
+$ cd ${GITHUB_USERNAME}/workspace # Переходим в рабочую директорию
+$ pushd . # Добавляем текущую директорию в виртуальный стек
+$ source scripts/activate # Активируем скрипт
 ```
 
 ```sh
-$ git clone https://github.com/${GITHUB_USERNAME}/lab02.git projects/lab03 # Клонируем репозиторий lab02 в каталог lab03.
-$ cd projects/lab03 # Переходим в директорию lab03.
-$ git remote remove origin # Отключение от ветки lab02.
-$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab03.git # Переходим в ветку lab03.
+$ git clone https://github.com/${GITHUB_USERNAME}/lab05 projects/lab06 # Клонируем репозиторий, созданный lab05 в директорию с lab06
+# Клонирование в «projects/lab06»…
+# remote: Enumerating objects: 55, done.
+# remote: Counting objects: 100% (55/55), done.
+# remote: Compressing objects: 100% (29/29), done.
+# remote: Total 55 (delta 17), reused 55 (delta 17), pack-reused 0
+# Получение объектов: 100% (55/55), 1.93 МиБ | 4.71 МиБ/с, готово.
+# Определение изменений: 100% (17/17), готово.
+
+$ cd projects/lab06 # Переходим директорию lab06
+$ git remote remove origin # Удаляем ссылку на репозиторий с lab05
+$ git remote add origin https://github.com/${GITHUB_USERNAME}/lab06 # Добавляем ссылку с именем origin на созданный репозиторий lab06
 ```
 
 ```sh
-$ g++  -std=c++11 -I./include -c sources/print.cpp
-# -std=c++11 - устанавливаем стандарт языка
-# -I./include - указываем каталог для поиска заголовочных файлов
-# -c sources/print.cpp - создание объектного файла print.cpp
-
-$ ls print.o # Показать print.0
-
-# Ищем print в бинарном файле (до вертикальной черты - данные на вход,
-# после - регулярное выражение, которое ищем). 
-$ nm print.o | grep print
-# Вывод:
-# 0000000000000000 T __Z5printRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEERNS_13basic_ostreamIcS2_EE
-# 0000000000000080 T __Z5printRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEERNS_14basic_ofstreamIcS2_EE
-
-$ ar rvs print.a print.o # Создаем архив print.a и кладем в него print.o.
-
-$ file print.a # Узнаем тип файла print.a.
-# Вывод: print.a: current ar archive random library
-
-$ g++ -std=c++11 -I./include -c examples/example1.cpp
-# -std=c++11 - устанавливаем стандарт языка.
-# -I./include - указываем каталог для поиска заголовочных файлов.
-# -c examples/example1.cpp - создание объектного файла example1.cpp.
-
-$ ls example1.o # Показать файл example1.o.
-
-$ g++ example1.o print.a -o example1 # Компилируем example1.o и print.a.
-                                      # Имя исполняемого файла example1.
-
-$ ./example1 && echo # Запуск скомпилированного файла и вывод результата.
-# Вывод: hello
+# Настройка CPack через определение CPack-переменных внутри файла CMakeLists.txt Добавление истории версий для проекта: версия 0.1.0.0:
+$ gsed -i "" '/project(print)/a\
+set(PRINT_VERSION_STRING "v\${PRINT_VERSION}")
+' CMakeLists.txt
+$ gsed -i "" '/project(print)/a\
+set(PRINT_VERSION\
+  \${PRINT_VERSION_MAJOR}.\${PRINT_VERSION_MINOR}.\${PRINT_VERSION_PATCH}.\${PRINT_VERSION_TWEAK})
+' CMakeLists.txt
+$ gsed -i "" '/project(print)/a\
+set(PRINT_VERSION_TWEAK 0)
+' CMakeLists.txt
+$ gsed -i "" '/project(print)/a\
+set(PRINT_VERSION_PATCH 0)
+' CMakeLists.txt
+$ gsed -i "" '/project(print)/a\
+set(PRINT_VERSION_MINOR 1)
+' CMakeLists.txt
+$ gsed -i "" '/project(print)/a\
+set(PRINT_VERSION_MAJOR 0)
+' CMakeLists.txt
+# Сравниваем изменения в файлах
+$ git diff
+# diff --git a/CMakeLists.txt b/CMakeLists.txt
+# index aa7a323..71b64e3 100644
+# --- a/CMakeLists.txt
+# +++ b/CMakeLists.txt
+# @@ -7,6 +7,13 @@ option(BUILD_EXAMPLES "Build examples" OFF)
+#  option(BUILD_TESTS "Build tests" OFF)
+ 
+#  project(print)
+# +set(PRINT_VERSION_MAJOR 0)
+# +set(PRINT_VERSION_MINOR 1)
+# +set(PRINT_VERSION_PATCH 0)
+# +set(PRINT_VERSION_TWEAK 0)
+# +set(PRINT_VERSION
+# +  ${PRINT_VERSION_MAJOR}.${PRINT_VERSION_MINOR}.${PRINT_VERSION_PATCH}.${PRINT_VERSION_TWEAK})
+# +set(PRINT_VERSION_STRING "v${PRINT_VERSION}")
+ 
+#  add_library(print STATIC ${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
 ```
 
 ```sh
-$ g++ -std=c++11 -I./include -c examples/example2.cpp
-# -std=c++11 - устанавливаем стандарт языка.
-# -I./include - указываем каталог для поиска заголовочных файлов.
-# -c examples/example2.cpp - создание объектного файла example2.cpp.
-
-$ nm example2.o # Просмотр бинарного файла example.o
-
-$ g++ example2.o print.a -o example2 # Компилируем example2.o и print.a.
-                                      # Имя исполняемого файла example2.
-
-$ ./example2 # Запуск скомпилированного файла.
-
-$ cat log.txt && echo # Открываем файл log.txt и выводим в консоль результат.
-# Вывод: hello
-```
-
-```sh
-# Последовательно удаляем файлы: example1.o, example2.o, print.o, print.a, example1, example2, log.txt.
-$ rm -rf example1.o example2.o print.o
-$ rm -rf print.a
-$ rm -rf example1 example2
-$ rm -rf log.txt
-```
-
-```sh
-# Настройка файла CMakeLists.txt путем записи в него следующего кода.
-$ cat > CMakeLists.txt <<EOF
-cmake_minimum_required(VERSION 3.4)
-project(print)
+$ touch DESCRIPTION && edit DESCRIPTION # Создание файла DESCRIPTION и его открытие для редактирования - описание пакета
+$ touch ChangeLog.md # Создание файла ChangeLog.md - список изменений в пакете
+$ export DATE="`LANG=en_US date +'%a %b %d %Y'`" # Задание переменной DATE 
+# Запись в файл со списком изменений 
+$ cat > ChangeLog.md <<EOF 
+* ${DATE} ${GITHUB_USERNAME} <${GITHUB_EMAIL}> 0.1.0.0
+- Initial RPM release
 EOF
 ```
 
 ```sh
-# Установка параметров в файле CMakeLists.txt.
+# Подключение необходимых системных библиотек
+$ cat > CPackConfig.cmake <<EOF
+include(InstallRequiredSystemLibraries)
+EOF
+```
+
+```sh
+# Установка значений переменных в пакете
+$ cat >> CPackConfig.cmake <<EOF
+set(CPACK_PACKAGE_CONTACT ${GITHUB_EMAIL})
+set(CPACK_PACKAGE_VERSION_MAJOR \${PRINT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR \${PRINT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH \${PRINT_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION_TWEAK \${PRINT_VERSION_TWEAK})
+set(CPACK_PACKAGE_VERSION \${PRINT_VERSION})
+set(CPACK_PACKAGE_DESCRIPTION_FILE \${CMAKE_CURRENT_SOURCE_DIR}/DESCRIPTION)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "static C++ library for printing")
+EOF
+```
+
+```sh
+# Добавление файлов в пакет
+$ cat >> CPackConfig.cmake <<EOF
+
+set(CPACK_RESOURCE_FILE_LICENSE \${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
+set(CPACK_RESOURCE_FILE_README \${CMAKE_CURRENT_SOURCE_DIR}/README.md)
+EOF
+```
+
+```sh
+# Настройки для RPM-пакета
+$ cat >> CPackConfig.cmake <<EOF
+
+set(CPACK_RPM_PACKAGE_NAME "print-devel")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+set(CPACK_RPM_PACKAGE_GROUP "print")
+set(CPACK_RPM_CHANGELOG_FILE \${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog.md)
+set(CPACK_RPM_PACKAGE_RELEASE 1)
+EOF
+```
+
+```sh
+# Настройки для Debian-пакета
+$ cat >> CPackConfig.cmake <<EOF
+
+set(CPACK_DEBIAN_PACKAGE_NAME "libprint-dev")
+set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "cmake >= 3.0")
+set(CPACK_DEBIAN_PACKAGE_RELEASE 1)
+EOF
+```
+
+```sh
+# Подключение модуля CPack
+$ cat >> CPackConfig.cmake <<EOF
+
+include(CPack)
+EOF
+```
+
+```sh
+# Добавление CPackConfig.cmake в основной CMakeLists.txt
 $ cat >> CMakeLists.txt <<EOF
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(CPackConfig.cmake)
 EOF
 ```
 
 ```sh
-# Создание статической библиотека с именем print, исполняемый файл которой print.cpp.
-$ cat >> CMakeLists.txt <<EOF
-add_library(print STATIC \${CMAKE_CURRENT_SOURCE_DIR}/sources/print.cpp)
-EOF
+$ gsed -i "" 's/lab05/lab06/g' README.md #
 ```
 
 ```sh
-# Подлючение заголовочных файлов.
-$ cat >> CMakeLists.txt <<EOF
-include_directories(\${CMAKE_CURRENT_SOURCE_DIR}/include)
-EOF
+$ git add . # Добавляем созданные файлы в отслеживаемые 
+$ git commit -m"added cpack config" # Даем название и делаем коммит
+# [master 567d0b5] added cpack config
+# 5 files changed, 36 insertions(+), 1 deletion(-)
+# create mode 100644 CPackConfig.cmake
+# create mode 100644 ChangeLog.md
+# create mode 100644 DESCRIPTION
+$ git tag v0.1.0.0 # Добавляем тэг с версией проекта
+$ git push origin master --tags # Загружаем на удаленный репозиторий (вместе с тэгом)
 ```
 
 ```sh
-# Компилируем и собираем проект.
+$ travis login --auto # Логинимся в Travis
+# Username: DimaZzZz101
+# Password for DimaZzZz101: *************
+
+# Successfully logged in as DimaZzZz101!
+$ travis enable # Делаем проект доступным
+# Detected repository as DimaZzZz101/lab06, is this correct? |yes| yes
+# DimaZzZz101/lab06: enabled :)
+```
+
+```sh
+# Сборка и генерация пакета через CPack
 $ cmake -H. -B_build
+# -- The C compiler identification is AppleClang 12.0.0.12000032
+# -- The CXX compiler identification is AppleClang 12.0.0.12000032
+# -- Detecting C compiler ABI info
+# -- Detecting C compiler ABI info - done
+# -- Check for working C compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc - skipped
+# -- Detecting C compile features
+# -- Detecting C compile features - done
+# -- Detecting CXX compiler ABI info
+# -- Detecting CXX compiler ABI info - done
+# -- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ - skipped
+# -- Detecting CXX compile features
+# -- Detecting CXX compile features - done
+# -- Configuring done
+# -- Generating done
+# -- Build files have been written to: /Users/mrrobot/DimaZzZz101/workspace/projects/lab06/_build
+
 $ cmake --build _build
+# [ 50%] Building CXX object CMakeFiles/print.dir/sources/print.cpp.o
+# [100%] Linking CXX static library libprint.a
+# [100%] Built target print
+
+$ cd _build # Переходим в директорию_build
+$ cpack -G "TGZ" # Архивируем пакет
+# CPack: Create package using TGZ
+# CPack: Install projects
+# CPack: - Run preinstall target for: print
+# CPack: - Install project: print []
+# CPack: Create package
+# CPack: - package: /Users/mrrobot/DimaZzZz101/workspace/projects/lab06/_build/print-0.1.0.0-Darwin.tar.gz generated.
+$ cd .. # Поднимаемся на директорию выше
 ```
 
 ```sh
-# Подключаем исполняемые файлы.
-$ cat >> CMakeLists.txt <<EOF
-add_executable(example1 \${CMAKE_CURRENT_SOURCE_DIR}/examples/example1.cpp)
-add_executable(example2 \${CMAKE_CURRENT_SOURCE_DIR}/examples/example2.cpp)
-EOF
+# Сборка и генерация пакета через CMake
+$ cmake -H. -B_build -DCPACK_GENERATOR="TGZ"
+# -- Configuring done
+# -- Generating done
+# -- Build files have been written to: /Users/mrrobot/DimaZzZz101/workspace/projects/lab06/_build
+
+$ cmake --build _build --target package
+# Consolidate compiler generated dependencies of target print
+# [100%] Built target print
+# Run CPack packaging tool...
+# CPack: Create package using TGZ
+# CPack: Install projects
+# CPack: - Run preinstall target for: print
+# CPack: - Install project: print []
+# CPack: Create package
+# CPack: - package: /Users/mrrobot/DimaZzZz101/workspace/projects/lab06/_build/print-0.1.0.0-Darwin.tar.gz generated.
 ```
 
 ```sh
-# Линковка исполняемых файлов с проектом.
-$ cat >> CMakeLists.txt <<EOF
-target_link_libraries(example1 print)
-target_link_libraries(example2 print)
-EOF
-```
-
-```sh
-$ cmake --build _build # Инициализация сборки проекта и его записи в директорию lab03/_build.
-$ cmake --build _build --target print # Запуск сборки, цель - проект print.
-$ cmake --build _build --target example1 # Запуск сборки, цель - проект example1.
-$ cmake --build _build --target example2 #Запуск сборки, цель - проект example2.
-```
-
-```sh
-$ ls -la _build/libprint.a # Просмотр содержимого libprint.a.
-# Вывод: -rw-r--r--  1 mrrobot  staff  13728 23 мар 02:12 _build/libprint.a
-$ _build/example1 && echo # Запуск example1 и вывод результата.
-# Вывод: hello
-$ _build/example2 # Запуск example2.
-$ cat log.txt && echo # Открываем файл log.txt и выводим результат.
-# Вывод: hello
-$ rm -rf log.txt # Удаляем файл log.txt
-```
-
-```sh
-$ git clone https://github.com/tp-labs/lab03 tmp # Клонируем репозиторий заданием ЛР в директорию tmp.
-$ mv -f tmp/CMakeLists.txt . # Помещаем в tmp файл CMakeLists.txt.
-$ rm -rf tmp # Удаляем директорию tmp.
-```
-
-```sh
-$ cat CMakeLists.txt # Открываем файл CMakeLists.txt для чтения.
-$ cmake -H. -B_build -D CMAKE_INSTALL_PREFIX=_install
-# -H. - Установка директории, в которую будет генерироваться файл.
-# -B_build - Указание директории для собираемых файлов.
-# -D - Действие аналогичны команде set.
-
-$ cmake --build _build --target install # Указание целей и последующая сборка проекта.
-
-$ tree _install # Демострация результата.
-# Вывод: 
-# _install
-#├── cmake
-#│   ├── print-config-noconfig.cmake
-#│   └── print-config.cmake
-#├── include
-#│   └── print.hpp
-#└── lib
-#    └── libprint.a
-
-#3 directories, 4 files
-```
-
-```sh
-$ git add CMakeLists.txt # Добвляем файл CMakeLists.txt в отслеживаемые.
-
-$ git commit -m "added CMakeLists.txt" # Делаем коммит.
-
-$ git push origin master # Отправляем на удаленный репозиторий в ветку master.
+$ mkdir artifacts # Создаем директорию artifacts
+$ mv _build/*.tar.gz artifacts # Перемещаем в нее заархивированный пакет
+$ tree artifacts # Демонстрация дерева директории artifacts
+# artifacts
+# ├── print-0.1.0.0-Darwin.tar.gz
+# └── screenshot.png
+#
+# 0 directories, 2 files
 ```
 
 ## Report
 
 ```sh
-$ popd # Извлекаем директорию из вершины стека
-$ export LAB_NUMBER=03
-$ git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER}
-$ mkdir reports/lab${LAB_NUMBER}
-$ cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md
-$ cd reports/lab${LAB_NUMBER}
-$ edit REPORT.md
-$ gist REPORT.md
+$ popd # Вытаскиваем элемент из виртуального стека
+$ export LAB_NUMBER=06 # Задаем переменной окружения номер лабораторной работы
+$ git clone https://github.com/tp-labs/lab${LAB_NUMBER} tasks/lab${LAB_NUMBER} # Клонируем репозиторий из tp-labs в директорию текущей лабораторной работы в каталоге tasks
+# Клонирование в «tasks/lab06»…
+# remote: Enumerating objects: 3, done.
+# remote: Counting objects: 100% (3/3), done.
+# remote: Compressing objects: 100% (3/3), done.
+# remote: Total 117 (delta 0), reused 0 (delta 0), pack-reused 114
+# Получение объектов: 100% (117/117), 1.33 МиБ | 4.95 МиБ/с, готово.
+# Определение изменений: 100% (34/34), готово.
+
+$ mkdir reports/lab${LAB_NUMBER} # Создаем директорию для отчета по lab06
+$ cp tasks/lab${LAB_NUMBER}/README.md reports/lab${LAB_NUMBER}/REPORT.md # Копируем с переименованием файл readme->report
+$ cd reports/lab${LAB_NUMBER} # Переходим в директорию с отчетами в lab06
+$ edit REPORT.md # Редактируем отчет
+$ gist REPORT.md # Отправляем отчет в gist
 ```
 
 ## Homework
 
-Представьте, что вы стажер в компании "Formatter Inc.".
-### Задание 1
-Вам поручили перейти на систему автоматизированной сборки **CMake**.
-Исходные файлы находятся в директории [formatter_lib](formatter_lib).
-В этой директории находятся файлы для статической библиотеки *formatter*.
-Создайте `CMakeList.txt` в директории [formatter_lib](formatter_lib),
-с помощью которого можно будет собирать статическую библиотеку *formatter*.
+После того, как вы настроили взаимодействие с системой непрерывной интеграции,</br>
+обеспечив автоматическую сборку и тестирование ваших изменений, стоит задуматься</br>
+о создание пакетов для измениний, которые помечаются тэгами (см. вкладку [releases](https://github.com/tp-labs/lab06/releases)).</br>
+Пакет должен содержать приложение _solver_ из [предыдущего задания](https://github.com/tp-labs/lab03#задание-1)
+Таким образом, каждый новый релиз будет состоять из следующих компонентов:
+- архивы с файлами исходного кода (`.tar.gz`, `.zip`)
+- пакеты с бинарным файлом _solver_ (`.deb`, `.rpm`, `.msi`, `.dmg`)
 
-### Задание 2
-У компании "Formatter Inc." есть перспективная библиотека,
-которая является расширением предыдущей библиотеки. Т.к. вы уже овладели
-навыком созданием `CMakeList.txt` для статической библиотеки *formatter*, ваш 
-руководитель поручает заняться созданием `CMakeList.txt` для библиотеки 
-*formatter_ex*, которая в свою очередь использует библиотеку *formatter*.
+В качестве подсказки:
+```sh
+$ cat .travis.yml
+os: osx
+script:
+...
+- cpack -G DragNDrop # dmg
 
-### Задание 3
-Конечно же ваша компания предоставляет примеры использования своих библиотек.
-Чтобы продемонстрировать как работать с библиотекой *formatter_ex*,
-вам необходимо создать два `CMakeList.txt` для двух простых приложений:
-* *hello_world*, которое использует библиотеку *formatter_ex*;
-* *solver*, приложение которое испольует статические библиотеки *formatter_ex* и *solver_lib*.
+$ cat .travis.yml
+os: linux
+script:
+...
+- cpack -G DEB # deb
 
-**Удачной стажировки!**
+$ cat .travis.yml
+os: linux
+addons:
+  apt:
+    packages:
+    - rpm
+script:
+...
+- cpack -G RPM # rpm
+
+$ cat appveyor.yml
+platform:
+- x86
+- x64
+build_script:
+...
+- cpack -G WIX # msi
+```
+
+Для этого нужно добавить ветвление в конфигурационные файлы для **CI** со следующей логикой:</br>
+если **commit** помечен тэгом, то необходимо собрать пакеты (`DEB, RPM, WIX, DragNDrop, ...`) </br>
+и разместить их на сервисе **GitHub**. (см. пример для [Travi CI](https://docs.travis-ci.com/user/deployment/releases))</br>
 
 ## Links
-- [Основы сборки проектов на С/C++ при помощи CMake](https://eax.me/cmake/)
-- [CMake Tutorial](http://neerc.ifmo.ru/wiki/index.php?title=CMake_Tutorial)
-- [C++ Tutorial - make & CMake](https://www.bogotobogo.com/cplusplus/make.php)
-- [Autotools](http://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html)
-- [CMake](https://cgold.readthedocs.io/en/latest/index.html)
+
+- [DMG](https://cmake.org/cmake/help/latest/module/CPackDMG.html)
+- [DEB](https://cmake.org/cmake/help/latest/module/CPackDeb.html)
+- [RPM](https://cmake.org/cmake/help/latest/module/CPackRPM.html)
+- [NSIS](https://cmake.org/cmake/help/latest/module/CPackNSIS.html)
 
 ```
 Copyright (c) 2015-2020 The ISC Authors
